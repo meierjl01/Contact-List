@@ -63,7 +63,7 @@ const Router = Backbone.Router.extend({
 
   register() {
     console.log('register page');
-    if (session.save('user-token')) {
+    if (session.get('user-token')) {
       this.navigate('contacts', {trigger: true});
     } else {
       container.empty();
