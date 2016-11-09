@@ -1,12 +1,13 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
-import config from './config';
+import secret from './config';
 import Session from './models/session';
 import Contact from './models/contact';
 import Contacts from './collections/contacts';
-// import renderContacts from './views/rendercontacts';
+import home from './views/home';
+import renderContacts from './views/rendercontacts';
 import renderLogin from './views/renderlogin';
-// import renderNewContact from '.views/rendernewcontact';
+import contactForm from '.views/rendernewcontact';
 import renderRegister from './views/renderregister';
 
 let session = new Session();
@@ -21,8 +22,8 @@ $(document).ajaxSend((evt, xhr, opts) => {
 
     console.log(opts.type);
 
-    xhr.setRequestHeader('application-id', config.appId);
-    xhr.setRequestHeader('secret-key', config.secret);
+    xhr.setRequestHeader('application-id', secret.appId);
+    xhr.setRequestHeader('secret-key', secret.secret);
     xhr.setRequestHeader('application-type', 'REST');
     if (session.get('user-token')) {
       xhr.setRequestHeader('user-token', session.get('user-token'));
@@ -41,7 +42,7 @@ const Router = Backbone.Router.extend({
 //do what we did in class today with the user-tokens. See if you can make it more DRY than how we did it this morning
 
   login(){
-    console.log('login page');
+    // console.log('login page');
     if(session.get('user-token')){
       this.navigate('contacts', {trigger: true});
     } else {
@@ -50,25 +51,32 @@ const Router = Backbone.Router.extend({
     }
   },
 
-  //home -- should it just be viewing the contact list or a list of options -- view contacts or add new contacts?
-
-  // home(){
-  //   console.log('home page');
-  //   if(session.get('user-token')) {
-  //     this.navigate('contacts', {trigger: true});
-  //   } else {
-  //     this.navigate('login', {trigger: true});
-  //   }
-  // },
+  home() {
+    // console.log('home');
+    if (session.get('user-token')) {
+      this.navigate('contacts', {trigger: true});
+    } else {
+      container.empty();
+      container.append(home(session));
+    }
+  },
 
   register() {
-    console.log('register page');
+    // console.log('register page');
     if (session.get('user-token')) {
       this.navigate('contacts', {trigger: true});
     } else {
       container.empty();
       container.append(renderRegister(session));
     }
+  },
+  newContact() {
+    container.empty();
+    container.append(contactForm(contacts, session));
+  },
+  contacts() {
+    container.empty();
+    container.append(contactList(contacts, session));
   }
 
 });
